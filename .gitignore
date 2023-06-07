@@ -5,5 +5,4 @@ ck+/
 __pycache__/
 .ipynb_check*
 *.pkl
-*.zip
 *.rar
