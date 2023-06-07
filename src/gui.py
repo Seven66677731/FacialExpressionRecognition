@@ -11,10 +11,28 @@ from recognition import *
 matplotlib.use("Qt5Agg")
 
 
+def get_faces_from_image(img_path):
+    """
+    获取图片中的人脸
+    :param img_path:
+    :return:
+    """
+    img, img_gray, faces = face_detect(img_path, 'blazeface')
+    if len(faces) == 0:
+        return None
+    # 遍历每一个脸
+    faces_gray = []
+    for (x, y, w, h) in faces:
+        face_img_gray = img_gray[y:y + h + 10, x:x + w + 10]
+        face_img_gray = cv2.resize(face_img_gray, (48, 48))
+        faces_gray.append(face_img_gray)
+    return faces_gray
+
+
 class UI(object):
     def __init__(self, form, model):
         self.model = model
-        form.setObjectName("Form")
+        form.setObjectName("my_gui")
         form.resize(1200, 800)
         # 原图无图时显示的label
         self.label_raw_pic = QtWidgets.QLabel(form)
@@ -22,19 +40,27 @@ class UI(object):
         self.label_raw_pic.setStyleSheet("background-color:#bbbbbb;")
         self.label_raw_pic.setAlignment(QtCore.Qt.AlignCenter)
         self.label_raw_pic.setObjectName("label_raw_pic")
+
         # 原图下方分割线
         self.line1 = QtWidgets.QFrame(form)
         self.line1.setGeometry(QtCore.QRect(340, 30, 20, 431))
         self.line1.setFrameShape(QtWidgets.QFrame.VLine)
         self.line1.setFrameShadow(QtWidgets.QFrame.Sunken)
-        self.line1.setObjectName("line1")
-        # 作者说明label
-        self.label_designer = QtWidgets.QLabel(form)
-        self.label_designer.setGeometry(QtCore.QRect(20, 700, 180, 40))
-        font = QtGui.QFont()
-        font.setPointSize(10)
-        self.label_designer.setFont(font)
-        self.label_designer.setObjectName("label_designer")
+
+        # my_pic
+        self.my_pic = QtWidgets.QLabel(form)
+        self.my_pic.setGeometry(QtCore.QRect(10, 500, 320, 275))
+        self.my_pic.setStyleSheet("background-color:#bbbbbb;")
+        self.my_pic.setAlignment(QtCore.Qt.AlignCenter)
+        self.my_pic.setObjectName("my_pic")
+        img = cv2.cvtColor(cv2.imread('../assets/my_pic.webp'), cv2.COLOR_BGR2RGB)
+        width = int(img.shape[1] * 0.65)
+        height = int(img.shape[0] * 0.65)
+        dim = (width, height)
+        img = cv2.resize(img, dim, interpolation=cv2.INTER_LINEAR)
+        self.my_pic.setPixmap(QtGui.QPixmap.fromImage(
+            QtGui.QImage(img.data, img.shape[1], img.shape[0], 3 * img.shape[1],
+                         QtGui.QImage.Format_RGB888)))
         # 结果布局设置
         self.layout_widget = QtWidgets.QWidget(form)
         self.layout_widget.setGeometry(QtCore.QRect(10, 310, 320, 240))
@@ -72,7 +98,7 @@ class UI(object):
         self.label_emotion.setObjectName("label_emotion")
         self.label_emotion.setAlignment(QtCore.Qt.AlignCenter)
         self.label_bar = QtWidgets.QLabel(form)
-        self.label_bar.setGeometry(QtCore.QRect(720, 170, 80, 180))
+        self.label_bar.setGeometry(QtCore.QRect(720, 170, 100, 180))
         self.label_bar.setObjectName("label_bar")
         self.line = QtWidgets.QFrame(form)
         self.line.setGeometry(QtCore.QRect(361, 150, 800, 16))
@@ -92,15 +118,14 @@ class UI(object):
 
     def retranslate_ui(self, form):
         _translate = QtCore.QCoreApplication.translate
-        form.setWindowTitle(_translate("Form", "Form"))
-        self.label_raw_pic.setText(_translate("Form", "O(∩_∩)O"))
-        self.label_designer.setText(_translate("Form", ""))
-        self.pushButton_select_img.setText(_translate("Form", "选取图片或视频"))
-        self.pushButton_open_camera.setText(_translate("Form", "打开摄像头"))
-        self.label_result.setText(_translate("Form", "识别结果"))
-        self.label_emotion.setText(_translate("Form", "null"))
-        self.label_bar.setText(_translate("Form", "概率直方图"))
-        self.label_rst.setText(_translate("Form", "Result"))
+        form.setWindowTitle(_translate("my_gui", "my_gui"))
+        self.label_raw_pic.setText(_translate("my_gui", "₍˄·͈༝·͈˄*₎◞ ̑̑"))
+        self.pushButton_select_img.setText(_translate("my_gui", "选取图片或视频"))
+        self.pushButton_open_camera.setText(_translate("my_gui", "打开摄像头"))
+        self.label_result.setText(_translate("my_gui", "识别结果"))
+        self.label_emotion.setText(_translate("my_gui", "null"))
+        self.label_bar.setText(_translate("my_gui", "概率直方图 "))
+        self.label_rst.setText(_translate("my_gui", "Result"))
 
     def open_camera(self):
         predict_expression_video(" ")
@@ -123,6 +148,7 @@ class UI(object):
     def show_raw_img(self, filename):
         # img = cv2.imread(filename)
         img = cv2.imread("../output/rst.png")
+
         frame = cv2.resize(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), (320, 320))
         self.label_raw_pic.setPixmap(QtGui.QPixmap.fromImage(
             QtGui.QImage(frame.data, frame.shape[1], frame.shape[0], 3 * frame.shape[1],
@@ -130,7 +156,7 @@ class UI(object):
 
     def show_results(self, emotion, possibility):
         # 显示表情名
-        self.label_emotion.setText(QtCore.QCoreApplication.translate("Form", emotion))
+        self.label_emotion.setText(QtCore.QCoreApplication.translate("my_gui", emotion))
         # 显示emoji
         if emotion != 'no':
             img = cv2.imread('../assets/icons/' + str(emotion) + '.png')
@@ -139,7 +165,7 @@ class UI(object):
                 QtGui.QImage(frame.data, frame.shape[1], frame.shape[0], 3 * frame.shape[1],
                              QtGui.QImage.Format_RGB888)))
         else:
-            self.label_rst.setText(QtCore.QCoreApplication.translate("Form", "no result"))
+            self.label_rst.setText(QtCore.QCoreApplication.translate("my_gui", "no result"))
         # 显示直方图
         self.show_bars(list(possibility))
 
@@ -150,23 +176,6 @@ class UI(object):
         graphic_scene.addWidget(dr)
         self.graphicsView.setScene(graphic_scene)
         self.graphicsView.show()
-
-    def get_faces_from_image(self, img_path):
-        """
-        获取图片中的人脸
-        :param img_path:
-        :return:
-        """
-        img, img_gray, faces = face_detect(img_path, 'blazeface')
-        if len(faces) == 0:
-            return None
-        # 遍历每一个脸
-        faces_gray = []
-        for (x, y, w, h) in faces:
-            face_img_gray = img_gray[y:y + h + 10, x:x + w + 10]
-            face_img_gray = cv2.resize(face_img_gray, (48, 48))
-            faces_gray.append(face_img_gray)
-        return faces_gray
 
 
 class MyFigureCanvas(FigureCanvas):
@@ -187,7 +196,7 @@ def load_cnn_model():
     载入CNN模型
     """
     model = CNN()
-    model.load_weights('../models/cnn3_best_weights.h5')
+    model.load_weights('../models/models.h5')
     return model
 
 

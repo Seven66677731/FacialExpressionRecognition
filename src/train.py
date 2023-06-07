@@ -14,9 +14,9 @@ from model import CNN
 
 his = None
 # 数据集（"fer2013  jaffe  ck+"）
-dataset = "jaffe"
+dataset = "fer2013"
 # 训练次数
-epochs = 10
+epochs = 100
 # 批量大小
 batch_size = 32
 # 是否保存训练结果
@@ -147,6 +147,7 @@ class CK(object):
     """
     CK+
     """
+
     def __init__(self):
         self.folder = '../dataset/ck+'
 
@@ -224,15 +225,16 @@ if dataset == "fer2013":
         # verbose = True：显示关于保存模型权重的信息。
         # save_best_only = True：只保存在验证集上性能最好的模型权重。
         # save_weights_only = True：仅保存模型的权重而不保存整个模型。
-        ModelCheckpoint('../models/cnn3_best_weights.h5', monitor='val_acc', verbose=True, save_best_only=False,
+        ModelCheckpoint('../models/models.h5', monitor='val_acc', verbose=True, save_best_only=False,
                         save_weights_only=True)]
     # 增强操作
     # rotation_range = 10：随机旋转图像的角度范围为-10到+10度之间。
     # width_shift_range = 0.05：随机水平平移图像的宽度范围为图像宽度的5%。
     # height_shift_range = 0.05：随机垂直平移图像的高度范围为图像高度的5%。
     # horizontal_flip = True：随机以50 % 的概率水平翻转图像。
-    # shear_range = 0.2：随机错切变换图像的错切强度范  围为0.2。
+    # shear_range = 0.2：随机错切变换图像的错切强度范围为0.2。
     # zoom_range = 0.2：随机缩放图像的尺寸范围为图像尺寸的20 %。
+
     train_generator = ImageDataGenerator(rotation_range=10,
                                          width_shift_range=0.05,
                                          height_shift_range=0.05,
@@ -279,7 +281,7 @@ elif dataset == "jaffe":
     callback = [
         # EarlyStopping(monitor='val_loss', patience=50, verbose=True),
         # ReduceLROnPlateau(monitor='lr', factor=0.1, patience=15, verbose=True),
-        ModelCheckpoint('../models/cnn3_best_weights.h5', monitor='val_accuracy', verbose=True, save_best_only=True,
+        ModelCheckpoint('../models/models.h5', monitor='val_accuracy', verbose=True, save_best_only=True,
                         save_weights_only=True)]
     history_jaffe = model.fit(train_generator, steps_per_epoch=len(y_train) // batch_size, epochs=epochs,
                               validation_data=valid_generator, validation_steps=len(y_valid) // batch_size,
@@ -303,7 +305,7 @@ else:
     sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
     model.compile(optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
     callback = [
-        ModelCheckpoint('../models/cnn3_best_weights.h5', monitor='val_acc', verbose=True, save_best_only=False,
+        ModelCheckpoint('../models/models.h5', monitor='val_acc', verbose=True, save_best_only=False,
                         save_weights_only=True)]
     history_ck = model.fit_generator(train_generator, steps_per_epoch=len(y_train) // batch_size, epochs=epochs,
                                      validation_data=valid_generator, validation_steps=len(y_valid) // batch_size,

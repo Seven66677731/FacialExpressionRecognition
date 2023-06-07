@@ -14,7 +14,7 @@ def load_model():
     :return:
     """
     model = CNN()
-    model.load_weights('../models/cnn3_best_weights.h5')
+    model.load_weights('../models/models.h5')
     return model
 
 
@@ -121,7 +121,7 @@ def predict_expression(img_path, model):
     :param model: 表情预测模型
     :return: 预测的主要表情和各个表情的概率
     """
-    border_color = (0, 0, 0)  # 黑框框
+    border_color = (0, 255, 0)  # 绿框框
     font_color = (255, 255, 255)  # 白字字
 
     # 进行人脸检测，使用BlazeFace模型
@@ -165,7 +165,7 @@ def predict_expression_video(filename):
     # 参数设置
     model = load_model()
 
-    border_color = (0, 0, 0)  # 黑框框
+    border_color = (0, 255, 0)  # 绿框框
     font_color = (255, 255, 255)  # 白字字
     capture = cv2.VideoCapture(0)  # 指定0号摄像头
 
