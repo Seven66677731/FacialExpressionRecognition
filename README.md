@@ -49,7 +49,7 @@ jupyter
 
 执行src/gui.py即可运行GUI界面
 
-![](./assets/gui.png)
+![](./assets/g.png)
 
 上图的GUI反馈的同时，会对图片上每个人脸进行检测并表情识别，处理后如下图。
 
