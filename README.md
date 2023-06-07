@@ -4,6 +4,8 @@
 
 
 ## 环境部署
+使用python3.6
+
 安装requirements.txt文件中的依赖库
 
 ```
