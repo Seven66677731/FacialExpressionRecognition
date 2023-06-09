@@ -202,7 +202,7 @@ def predict_expression_video(filename):
                 emotion = index2emotion(label_index)
                 # 在原始图像上绘制脸部的矩形框
                 cv2.rectangle(frame, (x - 10, y - 10), (x + w + 10, y + h + 10), border_color, thickness=2)
-                frame = cv2_img_add_text(frame, emotion, x + 30, y + 30, font_color, 20)
+                frame = cv2_img_add_text(frame, emotion, x + 30, y + 30, font_color, 40)
         cv2.imshow("press esc to exit", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 
         key = cv2.waitKey(1)  # 等待30ms，返回ASCII码
