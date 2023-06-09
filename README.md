@@ -1,7 +1,5 @@
 # 人脸表情识别
 
-## 
-
 
 ## 环境部署
 使用python3.6
@@ -22,20 +20,19 @@ sklearn
 scikit-image
 dlib==19.6.1
 jupyter
-
 ```
 
 
 
 
 ## 数据准备
-将dataset中的zip文件都解压在本目录
+将dataset中的zip文件都解压在dataset目录
 
 
 
 
 ## 模型训练
-执行下面src/train.py将在指定的数据集（fer2013或jaffe或ck+）上按照指定的batch_size训练指定的轮次。训练会生成对应的可视化训练过程，下图为在三个数据集上训练过程的共同绘图。
+执行下面src/train.py将在指定的数据集（fer2013或jaffe或ck+）按照指定的batch_size训练指定的轮次。训练会生成对应的可视化训练过程，下图为在三个数据集上训练过程的共同绘图。
 
 ![](./assets/loss.png)
 
@@ -51,7 +48,7 @@ jupyter
 
 ![](./assets/g.png)
 
-上图的GUI反馈的同时，会对图片上每个人脸进行检测并表情识别，处理后如下图。
+下图的GUI反馈的同时，会对图片上每个人脸进行检测并表情识别，处理后如下图。
 
 ![](./assets/res.png)
 
